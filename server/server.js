@@ -2,8 +2,9 @@ const express=require("express");
 const socketIO=require("socket.io");
 const path=require("path");
 const http=require("http");
+const moment=require("moment");
 
-let {generateMessage}=require("./utils/message");
+let {generateMessage,generateLocationMessage}=require("./utils/message");
 
 let app=new express();
 
@@ -32,6 +33,10 @@ io.on("connection",(socket)=>{
         console.log("user is disconnected");
     })
 
+    socket.on("createLocationMessage",(message)=>{
+
+        io.emit("newLocationMessage",generateLocationMessage("Admin",message.latitude,message.longitude))
+    })
    
 
     // socket.emit("newMessage",{
@@ -44,8 +49,11 @@ io.on("connection",(socket)=>{
     //     console.log("Create mail",email);
     // })
 
-    socket.on("createMessage",(message)=>{
+    socket.on("createMessage",(message,callback)=>{
+        console.log("create Message",message)
         io.emit("newMessage",generateMessage(message.from,message.text))
+        callback("Success");
+
     })
 })
 
