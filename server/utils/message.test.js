@@ -1,6 +1,8 @@
+
+
 const expect=require("expect")
 
-let {generateMessage}=require("./message")
+let {generateMessage,generateLocationMessage}=require("./message")
 
 
 describe("Test the messages",()=>{
@@ -15,5 +17,15 @@ describe("Test the messages",()=>{
        expect(message).toMatchObject({
            from,text
        })
+    })
+
+    it("when user sends a location",()=>{
+
+        let from="Himanshu";
+        let lat=34;
+        let long=45;
+        let url =`https://www.google.com/maps?q=${lat},${long}`
+        let res=generateLocationMessage(from,lat,long);
+        expect(res).toMatchObject({from,url})
     })
 })

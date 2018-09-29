@@ -4,6 +4,23 @@ let socket= io();
 
 socket.on("connect",()=>{
     console.log("Connected to server");
+   let paramObj= jQuery.deparam(window.location.search)
+    
+    socket.emit("join",paramObj,(error)=>{
+        if(error){
+            alert(error);
+            window.location.href="/";
+        }
+        
+    })
+
+    socket.on("updateUserList",(userList)=>{
+        let ol=jQuery("<ol></ol>")
+        userList.forEach((user)=>{
+          ol.append(jQuery(`<li></li>`).text(user));
+        })
+        jQuery("#users").html(ol)
+    })
 })
 
 socket.on("disconnect",()=>{
@@ -60,7 +77,7 @@ socket.on("newLocationMessage",(message)=>{
     let formattedTime = moment(message.createdAt).format("h:mm a");
     console.log("New Message", message);
     let template = $("#location-message-template").html()
-    console.log("UELLLLLL",message.url)
+   // console.log("UELLLLLL",message.url)
     let html = Mustache.render(template, {
         from: message.from,
         url:message.url,
@@ -102,7 +119,7 @@ let messageBox = $("[name='message']");
 $("#message-form").on("submit",function (e) {
     e.preventDefault();
     socket.emit("createMessage",{
-        from:"Himanshu",
+        
         text:messageBox.val()
     },()=>{
 messageBox.val('');
